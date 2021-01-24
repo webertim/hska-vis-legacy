@@ -1,5 +1,6 @@
 package hska.iwi.eShopMaster.controller;
 
+import hska.iwi.eShopMaster.clients.AuthClient;
 import hska.iwi.eShopMaster.model.businessLogic.manager.UserManager;
 import hska.iwi.eShopMaster.model.businessLogic.manager.impl.UserManagerImpl;
 import hska.iwi.eShopMaster.model.database.dataobjects.User;
@@ -10,6 +11,8 @@ import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.ActionSupport;
 
 public class LoginAction extends ActionSupport {
+
+	AuthClient authClient = new AuthClient();
 
 	/**
      *
@@ -30,27 +33,21 @@ public class LoginAction extends ActionSupport {
 
 		UserManager myCManager = new UserManagerImpl();
 		
-		// Get user from DB:
-		User user = myCManager.getUserByUsername(getUsername());
+		String token = authClient.login(getUsername(), getPassword());
 
 		// Does user exist?
-		if (user != null) {
-			// Is the password correct?
-			if (user.getPassword().equals(getPassword())) {
+		if (token != null) {
+
 				// Get session to save user role and login:
 				Map<String, Object> session = ActionContext.getContext().getSession();
 				
 				// Save user object in session:
-				session.put("webshop_user", user);
+				session.put("access_token", token);
 				session.put("message", "");
-				firstname= user.getFirstname();
-				lastname = user.getLastname();
-				role = user.getRole().getTyp();
+				//firstname= user.getFirstname();
+				//lastname = user.getLastname();
+				//role = user.getRole().getTyp();
 				result = "success";
-			}
-			else {
-				addActionError(getText("error.password.wrong"));
-			}
 		}
 		else {
 			addActionError(getText("error.username.wrong"));

@@ -1,4 +1,4 @@
-FROM maven:3.5.4-jdk-8-alpine as builder
+FROM maven:3.6.3-jdk-11-slim as builder
 
 COPY ./pom.xml ./pom.xml
 COPY ./src ./src

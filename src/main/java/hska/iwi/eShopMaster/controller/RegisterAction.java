@@ -31,7 +31,7 @@ public class RegisterAction extends ActionSupport {
 
         UserManager userManager = new UserManagerImpl();
 
-   		this.role = userManager.getRoleByLevel(1); // 1 -> regular User, 2-> Admin
+   		this.role = userManager.getRoleByName("user"); // 1 -> regular User, 2-> Admin
 
    		if (!userManager.doesUserAlreadyExist(this.username)) {
     		    	

@@ -1,5 +1,7 @@
 package hska.iwi.eShopMaster.model.businessLogic.manager.impl;
 
+import hska.iwi.eShopMaster.clients.RoleClient;
+import hska.iwi.eShopMaster.clients.UserRoleClient;
 import hska.iwi.eShopMaster.model.businessLogic.manager.UserManager;
 import hska.iwi.eShopMaster.model.database.dataAccessObjects.RoleDAO;
 import hska.iwi.eShopMaster.model.database.dataAccessObjects.UserDAO;
@@ -12,50 +14,39 @@ import hska.iwi.eShopMaster.model.database.dataobjects.User;
  */
 
 public class UserManagerImpl implements UserManager {
-	UserDAO helper;
+
+	UserRoleClient userRoleClient;
+	RoleClient roleClient;
 	
 	public UserManagerImpl() {
-		helper = new UserDAO();
+		userRoleClient = new UserRoleClient();
+		roleClient = new RoleClient();
 	}
 
-	
+
 	public void registerUser(String username, String name, String lastname, String password, Role role) {
 
 		User user = new User(username, name, lastname, password, role);
 
-		helper.saveObject(user);
+		userRoleClient.registerUser(user);
 	}
 
-	
+
 	public User getUserByUsername(String username) {
 		if (username == null || username.equals("")) {
 			return null;
 		}
-		return helper.getUserByUsername(username);
+		return userRoleClient.getUserByUsername(username);
 	}
 
-	public boolean deleteUserById(int id) {
-		User user = new User();
-		user.setId(id);
-		helper.deleteObject(user);
-		return true;
-	}
 
-	public Role getRoleByLevel(int level) {
-		RoleDAO roleHelper = new RoleDAO();
-		return roleHelper.getRoleByLevel(level);
+	public Role getRoleByName(String name) {
+		Role role = roleClient.getRoleByName(name);
+		return role;
 	}
 
 	public boolean doesUserAlreadyExist(String username) {
-		
-    	User dbUser = this.getUserByUsername(username);
-    	
-    	if (dbUser != null){
-    		return true;
-    	}
-    	else {
-    		return false;
-    	}
+    	return userRoleClient.getUserByUsername(username) != null;
 	}
 	
 
@@ -63,7 +54,6 @@ public class UserManagerImpl implements UserManager {
 		if (user.getFirstname().isEmpty() || user.getPassword().isEmpty() || user.getRole() == null || user.getLastname() == null || user.getUsername() == null) {
 			return false;
 		}
-		
 		return true;
 	}
 
